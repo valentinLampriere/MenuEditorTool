@@ -87,7 +87,9 @@ namespace MenuGraph.Editor
 			AssetDatabase.AddObjectToAsset(newMenuNode, _targetMenuGraph);
 
 			// Create the node in the canvas.
-			Vector2 nodePosition = dragPerformEvent.localMousePosition;
+			Vector2 worldMousePosition = dragPerformEvent.mousePosition;
+			Vector2 localMousePosition = contentViewContainer.WorldToLocal(worldMousePosition);
+			Vector2 nodePosition = localMousePosition;
 			MenuNodeView menuNodeView = new MenuNodeView(newMenuNode);
 			Rect rect = menuNodeView.GetPosition();
 			menuNodeView.SetPosition(new Rect(nodePosition.x, nodePosition.y, rect.width, rect.height));

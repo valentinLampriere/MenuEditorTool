@@ -4,7 +4,7 @@ namespace MenuGraph
 	using UnityEngine;
 
 	[CreateAssetMenu(fileName = "MenuGraph", menuName = "MenuGraph")]
-	public sealed class MenuGraph : ScriptableObject
+	public sealed partial class MenuGraph : ScriptableObject
 	{
 		#region Fields
 		[SerializeField] private List<MenuNode> _menuNodes = null;

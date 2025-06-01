@@ -1,5 +1,6 @@
 namespace MenuGraph.Editor
 {
+	using System;
 	using UnityEditor;
 	//using UnityEditor;
 	using UnityEditor.Experimental.GraphView;
@@ -41,13 +42,32 @@ namespace MenuGraph.Editor
 		internal void SetMenuGraph(MenuGraph menuGraph)
 		{
 			_targetMenuGraph = menuGraph;
-			//DeleteElements(graphElements);
 
-			//foreach (MenuNode menuNode in menuGraph.MenuNodes)
-			//{
-			//	MenuNodeView menuNodeView = new MenuNodeView(menuNode);
-			//	AddElement(menuNodeView);
-			//}
+			graphViewChanged -= OnGravViewChanged;
+			DeleteElements(graphElements);
+			graphViewChanged += OnGravViewChanged;
+
+			foreach (MenuNode menuNode in menuGraph.MenuNodes)
+			{
+				MenuNodeView menuNodeView = new MenuNodeView(menuNode);
+				AddElement(menuNodeView);
+			}
+		}
+
+		private GraphViewChange OnGravViewChanged(GraphViewChange graphViewChange)
+		{
+			if (graphViewChange.elementsToRemove != null)
+			{
+				foreach (GraphElement elementToRemove in graphViewChange.elementsToRemove)
+				{
+					if (elementToRemove is MenuNodeView menuNodeView)
+					{
+						_targetMenuGraph.DeleteMenuNode(menuNodeView.MenuNode);
+					}
+				}
+			}
+
+			return graphViewChange;
 		}
 
 		private void OnMenuNodeDropped(MenuUI menu, DragPerformEvent dragPerformEvent)

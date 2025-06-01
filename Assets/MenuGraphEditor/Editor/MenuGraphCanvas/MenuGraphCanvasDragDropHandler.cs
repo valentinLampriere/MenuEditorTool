@@ -8,27 +8,22 @@ namespace MenuGraph.Editor
 	internal sealed class MenuGraphCanvasDragDropHandler : IDisposable
 	{
 		#region Delegates
-		internal delegate void MenuNodeDraggedIn(MenuNode menuNode, DragEnterEvent dragEnterEvent);
-		internal delegate void MenuNodeDropped(MenuNode menuNode, DragPerformEvent dragPerformEvent);
+		internal delegate void MenuNodeDropped(MenuUI menu, DragPerformEvent dragPerformEvent);
 		#endregion Delegates
 
 		#region Fields
 		private VisualElement _target = null;
-		private MenuNodeDraggedIn _onMenuNodeDraggedIn = null;
 		private MenuNodeDropped _onMenuNodeDropped = null;
 		#endregion Fields
 
 		#region Constructors
 		internal MenuGraphCanvasDragDropHandler(
 			VisualElement target,
-			MenuNodeDraggedIn onMenuNodeDraggedIn = null,
 			MenuNodeDropped onMenuNodeDropped = null)
 		{
 			_target = target;
-			_onMenuNodeDraggedIn = onMenuNodeDraggedIn;
 			_onMenuNodeDropped = onMenuNodeDropped;
 
-			_target.RegisterCallback<DragEnterEvent>(OnDragEnter);
 			_target.RegisterCallback<DragUpdatedEvent>(OnDragUpdated);
 			_target.RegisterCallback<DragPerformEvent>(OnDragPerformed);
 		}
@@ -40,7 +35,6 @@ namespace MenuGraph.Editor
 		{
 			if (_target != null)
 			{
-				_target.UnregisterCallback<DragEnterEvent>(OnDragEnter);
 				_target.UnregisterCallback<DragUpdatedEvent>(OnDragUpdated);
 				_target.UnregisterCallback<DragPerformEvent>(OnDragPerformed);
 				_target = null;
@@ -49,15 +43,6 @@ namespace MenuGraph.Editor
 		#endregion Lifecycle
 
 		#region Drag Drop Callbacks
-		private void OnDragEnter(DragEnterEvent dragEnterEvent)
-		{
-			Object[] droppedObjects = DragAndDrop.objectReferences;
-			foreach (Object droppedObject in droppedObjects)
-			{
-				_onMenuNodeDraggedIn?.Invoke(droppedObject as MenuNode, dragEnterEvent);
-			}
-		}
-
 		private void OnDragUpdated(DragUpdatedEvent dragUpdatedEvent)
 		{
 			DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
@@ -69,7 +54,10 @@ namespace MenuGraph.Editor
 			Object[] droppedObjects = DragAndDrop.objectReferences;
 			foreach (Object droppedObject in droppedObjects)
 			{
-				_onMenuNodeDropped?.Invoke(droppedObject as MenuNode, dragPerformEvent);
+				if (droppedObject is MenuUI menuUI)
+				{
+					_onMenuNodeDropped?.Invoke(menuUI, dragPerformEvent);
+				}
 			}
 
 			DragAndDrop.AcceptDrag();

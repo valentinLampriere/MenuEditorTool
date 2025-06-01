@@ -15,14 +15,14 @@ namespace MenuGraph.Editor
 
 		#region Fields
 		private string _prefabPath = string.Empty;
-		private MenuNode _associatedPrefab = null;
+		private MenuUI _associatedPrefab = null;
 		#endregion Fields
 
 		#region Constructors
 		internal MenuNodeHierarchyPrefab(string prefabPath)
 		{
 			_prefabPath = prefabPath;
-			_associatedPrefab = AssetDatabase.LoadAssetAtPath<MenuNode>(_prefabPath);
+			_associatedPrefab = AssetDatabase.LoadAssetAtPath<MenuUI>(_prefabPath);
 
 			this.LoadUXML();
 
@@ -52,8 +52,11 @@ namespace MenuGraph.Editor
 				return;
 			}
 
-			Texture prefabTexture = EditorGUIUtility.IconContent("d_Prefab Icon").image;
-			icon.image = prefabTexture;
+			//Texture assetTexture = EditorGUIUtility.GetIconForObject(_associatedPrefab);
+			//Texture prefabTexture = EditorGUIUtility.IconContent("d_Prefab Icon").image;
+			Texture assetTexture = AssetDatabase.GetCachedIcon(AssetDatabase.GetAssetPath(_associatedPrefab));
+
+			icon.image = assetTexture;
 		}
 
 		private void OnMouseDown(MouseDownEvent mouseDownEvent)

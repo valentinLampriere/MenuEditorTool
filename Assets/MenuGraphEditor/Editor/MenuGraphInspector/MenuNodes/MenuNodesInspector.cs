@@ -44,7 +44,7 @@ namespace MenuGraph.Editor
 				string path = AssetDatabase.GUIDToAssetPath(prefabGuid);
 				GameObject menuNodePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
 
-				if (menuNodePrefab != null && menuNodePrefab.GetComponent<MenuNode>() != null)
+				if (menuNodePrefab != null && menuNodePrefab.GetComponent<MenuUI>() != null)
 				{
 					_menuNodesHierarchy.AddMenuPrefab(path);
 				}

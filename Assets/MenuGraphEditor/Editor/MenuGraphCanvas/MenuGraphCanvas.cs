@@ -85,6 +85,7 @@ namespace MenuGraph.Editor
 			MenuNode newMenuNode = ScriptableObject.CreateInstance<MenuNode>();
 			newMenuNode.name = menu.name;
 			AssetDatabase.AddObjectToAsset(newMenuNode, _targetMenuGraph);
+			AssetDatabase.SaveAssets();
 
 			// Create the node in the canvas.
 			Vector2 worldMousePosition = dragPerformEvent.mousePosition;

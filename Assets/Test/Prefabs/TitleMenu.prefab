@@ -252,27 +252,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57310f98a71b0664d856f90d7c546575, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _menuNodeAction:
-    _inputActionAsset: {fileID: 0}
-    _inputAction:
-      m_Name: Input
-      m_Type: 0
-      m_ExpectedControlType: 
-      m_Id: 5463729c-6533-4f60-8bb0-95c73b30e29e
-      m_Processors: 
-      m_Interactions: 
-      m_SingletonActionBindings:
-      - m_Name: 
-        m_Id: f10bf9b0-6496-4ec9-867f-37750bcd854e
-        m_Path: <Keyboard>/enter
-        m_Interactions: 
-        m_Processors: 
-        m_Groups: 
-        m_Action: Input
-        m_Flags: 0
-      m_Flags: 0
-    _button: {fileID: 0}
-  _editorPosition: {x: 0, y: 0}
+  _menuActions:
+  - _inputActionAsset: {fileID: 0}
+    _button: {fileID: 4530092106307360936}
   _editorIcon: {fileID: 10912, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!1 &5952634642711074812
 GameObject:

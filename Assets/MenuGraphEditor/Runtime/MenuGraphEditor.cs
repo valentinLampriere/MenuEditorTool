@@ -7,6 +7,11 @@ namespace MenuGraph
 	public sealed partial class MenuGraph
 	{
 		#region Methods
+		public void AddMenuNode(MenuNode menuNode)
+		{
+			_menuNodes.Add(menuNode);
+		}
+
 		public void DeleteMenuNode(MenuNode menuNode)
 		{
 			_menuNodes.Remove(menuNode);

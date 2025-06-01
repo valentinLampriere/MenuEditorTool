@@ -32,7 +32,7 @@ namespace MenuGraph
 		#endregion Fields
 
 		#region Properties
-		public IReadOnlyList<MenuNodeAction> MenuAction { get { return _menuActions; } }
+		public IReadOnlyList<MenuNodeAction> MenuActions { get { return _menuActions; } }
 		#endregion Properties
 	}
 }

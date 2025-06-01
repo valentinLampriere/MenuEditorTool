@@ -1,0 +1,6 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <engine:VisualElement style="flex-grow: 1; flex-direction: row; margin-left: 16px;">
+        <MenuGraph.Editor.ImageUxml name="PrefabIcon" style="width: 16px; height: 16px; flex-shrink: 0;" />
+        <engine:Label text="Label" name="PrefabName" style="flex-grow: 1;" />
+    </engine:VisualElement>
+</engine:UXML>

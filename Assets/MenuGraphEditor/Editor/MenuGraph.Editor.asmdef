@@ -1,0 +1,18 @@
+{
+    "name": "MenuGraph.Editor",
+    "rootNamespace": "MenuGraph.Editor",
+    "references": [
+        "GUID:8efd1a6b8f5b153429e0a1760b0888cd"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,10 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <MenuGraph.Editor.TwoPaneSplitViewUxml fixed-pane-initial-dimension="200">
+        <engine:VisualElement style="flex-grow: 1;">
+            <MenuGraph.Editor.MenuNodesInspector />
+        </engine:VisualElement>
+        <engine:VisualElement style="flex-grow: 1;">
+            <MenuGraph.Editor.MenuGraphCanvas style="flex-grow: 1;" />
+        </engine:VisualElement>
+    </MenuGraph.Editor.TwoPaneSplitViewUxml>
+</engine:UXML>

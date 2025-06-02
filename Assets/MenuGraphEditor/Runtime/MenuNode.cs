@@ -13,7 +13,7 @@ namespace MenuGraph
 		#region Properties
 		// TODO: Instead of adding a setter, maybe it's possible to use Binding to bind the field to a UI element?
 		public MenuUI TargetMenu { get { return _targetMenu; } set { _targetMenu = value; } }
-		public Vector2 EditorPosition { get { return _editorPosition; } }
+		public Vector2 EditorPosition { get { return _editorPosition; } set { _editorPosition = value; } }
 		#endregion Properties
 	}
 }

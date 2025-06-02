@@ -2,6 +2,7 @@ namespace MenuGraph.Editor
 {
 	using System.Collections.Generic;
 	using UnityEditor.Experimental.GraphView;
+	using UnityEngine;
 
 	internal sealed class MenuNodeView : Node
 	{
@@ -29,6 +30,13 @@ namespace MenuGraph.Editor
 		#endregion Constructors
 
 		#region Methods
+		public override void SetPosition(Rect newPos)
+		{
+			base.SetPosition(newPos);
+
+			_menuNode.EditorPosition = newPos.position;
+		}
+
 		private void CreateInputPort()
 		{
 			_inputPort = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(Port));

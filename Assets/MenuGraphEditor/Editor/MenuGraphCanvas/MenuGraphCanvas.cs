@@ -1,8 +1,6 @@
 namespace MenuGraph.Editor
 {
-	using System;
 	using UnityEditor;
-	//using UnityEditor;
 	using UnityEditor.Experimental.GraphView;
 	using UnityEngine;
 	using UnityEngine.UIElements;
@@ -50,6 +48,8 @@ namespace MenuGraph.Editor
 			foreach (MenuNode menuNode in menuGraph.MenuNodes)
 			{
 				MenuNodeView menuNodeView = new MenuNodeView(menuNode);
+				Rect rect = menuNodeView.GetPosition();
+				menuNodeView.SetPosition(new Rect(menuNode.EditorPosition.x, menuNode.EditorPosition.y, rect.width, rect.height));
 				AddElement(menuNodeView);
 			}
 		}
@@ -81,17 +81,19 @@ namespace MenuGraph.Editor
 				return;
 			}
 
+			Vector2 worldMousePosition = dragPerformEvent.mousePosition;
+			Vector2 localMousePosition = contentViewContainer.WorldToLocal(worldMousePosition);
+			Vector2 nodePosition = localMousePosition;
+
 			// Create the ScriptableObject asset.
 			MenuNode newMenuNode = ScriptableObject.CreateInstance<MenuNode>();
 			newMenuNode.name = menu.name;
 			newMenuNode.TargetMenu = menu;
+			newMenuNode.EditorPosition = nodePosition;
 			_targetMenuGraph.AddMenuNode(newMenuNode);
 			AssetDatabase.AddObjectToAsset(newMenuNode, _targetMenuGraph);
 
 			// Create the node in the canvas.
-			Vector2 worldMousePosition = dragPerformEvent.mousePosition;
-			Vector2 localMousePosition = contentViewContainer.WorldToLocal(worldMousePosition);
-			Vector2 nodePosition = localMousePosition;
 			MenuNodeView menuNodeView = new MenuNodeView(newMenuNode);
 			Rect rect = menuNodeView.GetPosition();
 			menuNodeView.SetPosition(new Rect(nodePosition.x, nodePosition.y, rect.width, rect.height));

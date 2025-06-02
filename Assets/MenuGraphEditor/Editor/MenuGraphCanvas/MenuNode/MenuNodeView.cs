@@ -57,7 +57,7 @@ namespace MenuGraph.Editor
 
 				Port outputPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(Port));
 				outputPort.portName = menuAction.EditorName;
-				inputContainer.Add(outputPort);
+				outputContainer.Add(outputPort);
 				_outputPort.Add(outputPort);
 			}
 		}

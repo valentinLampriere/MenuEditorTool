@@ -256,6 +256,9 @@ MonoBehaviour:
   - _editorName: Test Button
     _inputActionAsset: {fileID: 0}
     _button: {fileID: 4530092106307360936}
+  - _editorName: Test Button 2
+    _inputActionAsset: {fileID: 0}
+    _button: {fileID: 4530092106307360936}
   _editorIcon: {fileID: 10912, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!1 &5952634642711074812
 GameObject:

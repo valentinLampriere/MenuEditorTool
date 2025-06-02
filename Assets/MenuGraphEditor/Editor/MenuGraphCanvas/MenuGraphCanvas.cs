@@ -1,5 +1,6 @@
 namespace MenuGraph.Editor
 {
+	using System.Collections.Generic;
 	using UnityEditor;
 	using UnityEditor.Experimental.GraphView;
 	using UnityEngine;
@@ -13,6 +14,7 @@ namespace MenuGraph.Editor
 		private MenuGraph _targetMenuGraph = null;
 
 		private MenuGraphCanvasDragDropHandler _dragDropHandler = null;
+		private GraphViewChangesHandler _graphViewChangesHandler = null;
 		#endregion Fields
 
 		#region Constructors
@@ -21,7 +23,10 @@ namespace MenuGraph.Editor
 			Insert(0, new GridBackground());
 			this.LoadUSS();
 
-			_dragDropHandler = new MenuGraphCanvasDragDropHandler(this, onMenuNodeDropped : OnMenuNodeDropped);
+			_dragDropHandler = new MenuGraphCanvasDragDropHandler(this, OnMenuNodeDropped);
+			_graphViewChangesHandler = new GraphViewChangesHandler(this);
+			_graphViewChangesHandler.GraphElementRemoved += OnGraphElementRemoved;
+			_graphViewChangesHandler.EdgeCreated += OnEdgeCreated;
 
 			this.AddManipulator(new ContentZoomer());
 			this.AddManipulator(new ContentDragger());
@@ -33,17 +38,42 @@ namespace MenuGraph.Editor
 		{
 			_dragDropHandler?.Dispose();
 			_dragDropHandler = null;
+
+			if (_graphViewChangesHandler != null)
+			{
+				_graphViewChangesHandler.GraphElementRemoved -= OnGraphElementRemoved;
+				_graphViewChangesHandler.EdgeCreated -= OnEdgeCreated;
+
+				_graphViewChangesHandler?.Dispose();
+				_graphViewChangesHandler = null;
+			}
 		}
 		#endregion Constructors
 
 		#region Methods
+		#region GraphView
+		public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
+		{
+			List<Port> compatiblePorts = new List<Port>();
+			foreach (Port port in ports)
+			{
+				if (port.direction != startPort.direction && startPort.node != port.node)
+				{
+					compatiblePorts.Add(port);
+				}
+			}
+
+			return compatiblePorts;
+		}
+		#endregion GraphView
+
 		internal void SetMenuGraph(MenuGraph menuGraph)
 		{
 			_targetMenuGraph = menuGraph;
 
-			graphViewChanged -= OnGravViewChanged;
+			_graphViewChangesHandler.GraphElementRemoved -= OnGraphElementRemoved;
 			DeleteElements(graphElements);
-			graphViewChanged += OnGravViewChanged;
+			_graphViewChangesHandler.GraphElementRemoved += OnGraphElementRemoved;
 
 			foreach (MenuNode menuNode in menuGraph.MenuNodes)
 			{
@@ -52,22 +82,6 @@ namespace MenuGraph.Editor
 				menuNodeView.SetPosition(new Rect(menuNode.EditorPosition.x, menuNode.EditorPosition.y, rect.width, rect.height));
 				AddElement(menuNodeView);
 			}
-		}
-
-		private GraphViewChange OnGravViewChanged(GraphViewChange graphViewChange)
-		{
-			if (graphViewChange.elementsToRemove != null)
-			{
-				foreach (GraphElement elementToRemove in graphViewChange.elementsToRemove)
-				{
-					if (elementToRemove is MenuNodeView menuNodeView)
-					{
-						_targetMenuGraph.DeleteMenuNode(menuNodeView.MenuNode);
-					}
-				}
-			}
-
-			return graphViewChange;
 		}
 
 		private void OnMenuNodeDropped(MenuUI menu, DragPerformEvent dragPerformEvent)
@@ -97,10 +111,22 @@ namespace MenuGraph.Editor
 			MenuNodeView menuNodeView = new MenuNodeView(newMenuNode);
 			Rect rect = menuNodeView.GetPosition();
 			menuNodeView.SetPosition(new Rect(nodePosition.x, nodePosition.y, rect.width, rect.height));
+			AddElement(menuNodeView);
 
 			AssetDatabase.SaveAssets();
+		}
 
-			AddElement(menuNodeView);
+		private void OnGraphElementRemoved(GraphElement removedGraphElement)
+		{
+			if (removedGraphElement is MenuNodeView menuNodeView)
+			{
+				_targetMenuGraph.DeleteMenuNode(menuNodeView.MenuNode);
+			}
+		}
+
+		private void OnEdgeCreated(Edge edgeCreated)
+		{
+
 		}
 		#endregion Methods
 	}

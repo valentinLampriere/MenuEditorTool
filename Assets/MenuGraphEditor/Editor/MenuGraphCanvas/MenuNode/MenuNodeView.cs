@@ -3,9 +3,14 @@ namespace MenuGraph.Editor
 	using System.Collections.Generic;
 	using UnityEditor.Experimental.GraphView;
 	using UnityEngine;
+	using UnityEngine.UIElements;
 
 	internal sealed class MenuNodeView : Node
 	{
+		#region Constants
+		private const string NODE_CONTENT_ELEMENT_ID = "contents";
+		#endregion Constants
+
 		#region Fields
 		private MenuNode _menuNode = null;
 
@@ -24,6 +29,7 @@ namespace MenuGraph.Editor
 
 			this.title = menuNode.name;
 
+			AddSnapshot();
 			CreateInputPort();
 			CreateOutputPorts();
 		}
@@ -35,6 +41,12 @@ namespace MenuGraph.Editor
 			base.SetPosition(newPos);
 
 			_menuNode.EditorPosition = newPos.position;
+		}
+
+		private void AddSnapshot()
+		{
+			VisualElement content = this.Q(NODE_CONTENT_ELEMENT_ID);
+			content.Insert(0, new MenuNodeThumbnailImage(_menuNode.TargetMenu.ThumbnailTexture));
 		}
 
 		private void CreateInputPort()

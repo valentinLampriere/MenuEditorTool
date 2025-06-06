@@ -15,6 +15,7 @@ namespace MenuGraph.Editor
 
 		private MenuGraphCanvasDragDropHandler _dragDropHandler = null;
 		private GraphViewChangesHandler _graphViewChangesHandler = null;
+		private SelectionWatcher _selectionWatcher = null;
 		#endregion Fields
 
 		#region Constructors
@@ -32,6 +33,10 @@ namespace MenuGraph.Editor
 			this.AddManipulator(new ContentDragger());
 			this.AddManipulator(new SelectionDragger());
 			this.AddManipulator(new RectangleSelector());
+
+			_selectionWatcher = new SelectionWatcher();
+			_selectionWatcher.Register<ObjectSelectedComponent, MenuNode>(OnMenuNodeSelected);
+			_selectionWatcher.Register<ObjectDeselectedComponent, MenuNode>(OnMenuNodeDeselected);
 		}
 
 		~MenuGraphCanvas()
@@ -46,6 +51,14 @@ namespace MenuGraph.Editor
 
 				_graphViewChangesHandler?.Dispose();
 				_graphViewChangesHandler = null;
+			}
+
+			if (_selectionWatcher != null)
+			{
+				_selectionWatcher.Unregister<ObjectSelectedComponent, MenuNode>(OnMenuNodeSelected);
+				_selectionWatcher.Unregister<ObjectDeselectedComponent, MenuNode>(OnMenuNodeDeselected);
+				_selectionWatcher.Dispose();
+				_selectionWatcher = null;
 			}
 		}
 		#endregion Constructors
@@ -98,7 +111,7 @@ namespace MenuGraph.Editor
 				{
 					MenuNode child = parentNode.Children[j];
 
-					if (child.Parent != parentNode)
+					if (child == null)
 					{
 						continue;
 					}
@@ -212,6 +225,32 @@ namespace MenuGraph.Editor
 
 			childIndex = -1;
 			return false;
+		}
+
+		private void OnMenuNodeSelected(MenuNode menuNode)
+		{
+			foreach (Node node in nodes)
+			{
+				MenuNodeView menuNodeView = node as MenuNodeView;
+				
+				if (menuNodeView.MenuNode == menuNode)
+				{
+					AddToSelection(node);
+				}
+			}
+		}
+
+		private void OnMenuNodeDeselected(MenuNode menuNode)
+		{
+			foreach (Node node in nodes)
+			{
+				MenuNodeView menuNodeView = node as MenuNodeView;
+				
+				if (menuNodeView.MenuNode == menuNode)
+				{
+					RemoveFromSelection(node);
+				}
+			}
 		}
 		#endregion Methods
 	}

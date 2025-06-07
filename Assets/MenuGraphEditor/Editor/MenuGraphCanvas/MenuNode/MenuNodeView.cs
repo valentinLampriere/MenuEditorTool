@@ -47,8 +47,12 @@ namespace MenuGraph.Editor
 
 		private void AddSnapshot()
 		{
+			Canvas canvas = _menuNode.TargetMenu.GetComponent<Canvas>();
+			CanvasSnapshotMaker canvasSnapshotMaker = new CanvasSnapshotMaker(canvas);
+			Texture2D texture = canvasSnapshotMaker.TakeSnapshot();
+
 			VisualElement content = this.Q(NODE_CONTENT_ELEMENT_ID);
-			content.Insert(0, new MenuNodeThumbnailImage(_menuNode.TargetMenu.EditorThumbnail));
+			content.Insert(0, new MenuNodeThumbnailImage(texture));
 		}
 
 		private void CreateInputPort()

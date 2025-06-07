@@ -16,6 +16,8 @@ namespace MenuGraph.Editor
 
 		private Port _inputPort = null;
 		private List<Port> _outputPorts = null;
+
+		private MenuNodeThumbnailImage _menuNodeThumbnailImage = null;
 		#endregion Fields
 
 		#region Properties
@@ -29,7 +31,7 @@ namespace MenuGraph.Editor
 		{
 			_menuNode = menuNode;
 
-			this.title = menuNode.name;
+			title = menuNode.name;
 
 			AddSnapshot();
 			CreateInputPort();
@@ -45,6 +47,13 @@ namespace MenuGraph.Editor
 			_menuNode.EditorPosition = newPos.position;
 		}
 
+		protected override void ToggleCollapse()
+		{
+			base.ToggleCollapse();
+
+			_menuNodeThumbnailImage.style.display = expanded == true ? DisplayStyle.Flex : DisplayStyle.None;
+		}
+
 		private void AddSnapshot()
 		{
 			Canvas canvas = _menuNode.TargetMenu.GetComponent<Canvas>();
@@ -52,7 +61,8 @@ namespace MenuGraph.Editor
 			Texture2D texture = canvasSnapshotMaker.TakeSnapshot();
 
 			VisualElement content = this.Q(NODE_CONTENT_ELEMENT_ID);
-			content.Insert(0, new MenuNodeThumbnailImage(texture));
+			_menuNodeThumbnailImage = new MenuNodeThumbnailImage(texture);
+			content.Insert(0, _menuNodeThumbnailImage);
 		}
 
 		private void CreateInputPort()

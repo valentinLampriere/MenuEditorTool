@@ -12,7 +12,7 @@ namespace MenuGraph.Editor
 		#region Constructors
 		internal CanvasSnapshotMaker(Canvas canvas)
 		{
-
+			_canvas = canvas;
 		}
 		#endregion Constructors
 

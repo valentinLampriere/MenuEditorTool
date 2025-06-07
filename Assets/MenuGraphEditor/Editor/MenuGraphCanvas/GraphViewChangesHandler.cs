@@ -70,7 +70,14 @@ namespace MenuGraph.Editor
 
 		private GraphViewChange OnGraphViewChanged(GraphViewChange graphViewChange)
 		{
-			List<GraphElement> elementsToRemove = graphViewChange.elementsToRemove;
+			HandleElementsToRemove(graphViewChange.elementsToRemove);
+			HandleEdgesToCreate(graphViewChange.edgesToCreate);
+
+			return graphViewChange;
+		}
+
+		private void HandleElementsToRemove(List<GraphElement> elementsToRemove)
+		{
 			if (elementsToRemove != null)
 			{
 				int elementsToRemoveCount = elementsToRemove.Count;
@@ -80,8 +87,10 @@ namespace MenuGraph.Editor
 					_graphElementRemoved?.Invoke(elementToRemove);
 				}
 			}
-
-			List<Edge> edgesToCreate = graphViewChange.edgesToCreate;
+		}
+		
+		private void HandleEdgesToCreate(List<Edge> edgesToCreate)
+		{
 			if (edgesToCreate != null)
 			{
 				int edgesToCreateCount = edgesToCreate.Count;
@@ -91,8 +100,6 @@ namespace MenuGraph.Editor
 					_edgeCreated?.Invoke(edgeToCreate);
 				}
 			}
-
-			return graphViewChange;
 		}
 		#endregion Methods
 	}

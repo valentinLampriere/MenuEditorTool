@@ -24,7 +24,7 @@ namespace MenuGraph.Editor
 
 			MenuGraph currentMenuGraph = SelectMenuGraph();
 
-			menuGraphCanvas.SetMenuGraph(currentMenuGraph);
+			menuGraphCanvas.PopulateMenuGraph(currentMenuGraph);
 		}
 
 		private MenuGraph SelectMenuGraph()

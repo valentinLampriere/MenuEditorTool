@@ -15,6 +15,7 @@ namespace MenuGraph.Editor
 
 		private MenuGraphCanvasDragDropHandler _dragDropHandler = null;
 		private GraphViewChangesHandler _graphViewChangesHandler = null;
+		private SelectionWatcher _selectionWatcher = null;
 		#endregion Fields
 
 		#region Constructors
@@ -28,10 +29,14 @@ namespace MenuGraph.Editor
 			_graphViewChangesHandler.GraphElementRemoved += OnGraphElementRemoved;
 			_graphViewChangesHandler.EdgeCreated += OnEdgeCreated;
 
-			this.AddManipulator(new ContentZoomer());
+			this.AddManipulator(new ContentZoomer() { minScale = 0.6f, maxScale = 1.5f});
 			this.AddManipulator(new ContentDragger());
 			this.AddManipulator(new SelectionDragger());
 			this.AddManipulator(new RectangleSelector());
+
+			_selectionWatcher = new SelectionWatcher();
+			_selectionWatcher.Register<ObjectSelectedComponent, MenuNode>(OnMenuNodeSelected);
+			_selectionWatcher.Register<ObjectDeselectedComponent, MenuNode>(OnMenuNodeDeselected);
 		}
 
 		~MenuGraphCanvas()
@@ -46,6 +51,14 @@ namespace MenuGraph.Editor
 
 				_graphViewChangesHandler?.Dispose();
 				_graphViewChangesHandler = null;
+			}
+
+			if (_selectionWatcher != null)
+			{
+				_selectionWatcher.Unregister<ObjectSelectedComponent, MenuNode>(OnMenuNodeSelected);
+				_selectionWatcher.Unregister<ObjectDeselectedComponent, MenuNode>(OnMenuNodeDeselected);
+				_selectionWatcher.Dispose();
+				_selectionWatcher = null;
 			}
 		}
 		#endregion Constructors
@@ -67,7 +80,7 @@ namespace MenuGraph.Editor
 		}
 		#endregion GraphView
 
-		internal void SetMenuGraph(MenuGraph menuGraph)
+		internal void PopulateMenuGraph(MenuGraph menuGraph)
 		{
 			_targetMenuGraph = menuGraph;
 
@@ -75,12 +88,47 @@ namespace MenuGraph.Editor
 			DeleteElements(graphElements);
 			_graphViewChangesHandler.GraphElementRemoved += OnGraphElementRemoved;
 
-			foreach (MenuNode menuNode in menuGraph.MenuNodes)
+			int menuNodesCount = menuGraph.MenuNodes.Count;
+
+			Dictionary<MenuNode, MenuNodeView> _menuNodeToViews = new Dictionary<MenuNode, MenuNodeView>();
+
+			for (int i = 0; i < menuNodesCount; i++)
 			{
+				MenuNode menuNode = menuGraph.MenuNodes[i];
 				MenuNodeView menuNodeView = new MenuNodeView(menuNode);
 				Rect rect = menuNodeView.GetPosition();
 				menuNodeView.SetPosition(new Rect(menuNode.EditorPosition.x, menuNode.EditorPosition.y, rect.width, rect.height));
 				AddElement(menuNodeView);
+				_menuNodeToViews.Add(menuNode, menuNodeView);
+			}
+
+			for (int i = 0; i < menuNodesCount; i++)
+			{
+				MenuNode parentNode = menuGraph.MenuNodes[i];
+				int childrenCount = parentNode.Children.Count;
+
+				for (int j = 0; j < childrenCount; j++)
+				{
+					MenuNode child = parentNode.Children[j];
+
+					if (child == null)
+					{
+						continue;
+					}
+
+					if (_menuNodeToViews.TryGetValue(parentNode, out MenuNodeView parentView) == false ||
+						_menuNodeToViews.TryGetValue(child, out MenuNodeView childView) == false)
+					{
+						Debug.LogError($"Failed to retrieve a {nameof(MenuNodeView)} from a {nameof(MenuNode)}" +
+							$"(from {parentNode.name} or {child.name})");
+						continue;
+					}
+
+					int parentNodeOutputPortsCount = parentView.OutputPorts.Count;
+
+					Edge edge = parentView.OutputPorts[j].ConnectTo(childView.InputPort);
+					AddElement(edge);
+				}
 			}
 		}
 
@@ -122,11 +170,87 @@ namespace MenuGraph.Editor
 			{
 				_targetMenuGraph.DeleteMenuNode(menuNodeView.MenuNode);
 			}
+
+			if (removedGraphElement is Edge edge)
+			{
+				MenuNodeView parentView = edge.output.node as MenuNodeView;
+				MenuNodeView childView = edge.input.node as MenuNodeView;
+
+				childView.MenuNode.Parent = null;
+
+				if (TryGetPortIndex(parentView, edge.output, out int childIndex) == false)
+				{
+					Debug.LogError($"Couldn't find the index of the port \"{edge.output.portName}\"" +
+						$"from the {nameof(MenuNodeView)} {parentView.name}");
+					return;
+				}
+
+				parentView.MenuNode.Children[childIndex] = null;
+			}
 		}
 
 		private void OnEdgeCreated(Edge edgeCreated)
 		{
+			MenuNodeView parentView = edgeCreated.output.node as MenuNodeView;
+			MenuNodeView childView = edgeCreated.input.node as MenuNodeView;
 
+			if (TryGetPortIndex(parentView, edgeCreated.output, out int childIndex) == false)
+			{
+				Debug.LogError($"Couldn't find the index of the port \"{edgeCreated.output.portName}\"" +
+					$"from the {nameof(MenuNodeView)} {parentView.name}");
+				return;
+			}
+
+			childView.MenuNode.Parent = parentView.MenuNode;
+			parentView.MenuNode.Children[childIndex] = childView.MenuNode;
+		}
+
+		/// <summary>
+		/// Loop through the output ports of the given <paramref name="menuNodeView"/> and return the index of the port
+		/// which match the given <paramref name="port"/>.
+		/// </summary>
+		private bool TryGetPortIndex(MenuNodeView menuNodeView, Port port, out int childIndex)
+		{
+			int parentOutputCount = menuNodeView.outputContainer.childCount;
+			for (int i = 0; i < parentOutputCount; i++)
+			{
+				Port outputPort = menuNodeView.outputContainer.ElementAt(i) as Port;
+
+				if (port == outputPort)
+				{
+					childIndex = i;
+					return true;
+				}
+			}
+
+			childIndex = -1;
+			return false;
+		}
+
+		private void OnMenuNodeSelected(MenuNode menuNode)
+		{
+			foreach (Node node in nodes)
+			{
+				MenuNodeView menuNodeView = node as MenuNodeView;
+				
+				if (menuNodeView.MenuNode == menuNode)
+				{
+					AddToSelection(node);
+				}
+			}
+		}
+
+		private void OnMenuNodeDeselected(MenuNode menuNode)
+		{
+			foreach (Node node in nodes)
+			{
+				MenuNodeView menuNodeView = node as MenuNodeView;
+				
+				if (menuNodeView.MenuNode == menuNode)
+				{
+					RemoveFromSelection(node);
+				}
+			}
 		}
 		#endregion Methods
 	}

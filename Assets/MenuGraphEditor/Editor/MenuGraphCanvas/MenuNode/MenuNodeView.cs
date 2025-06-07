@@ -15,11 +15,13 @@ namespace MenuGraph.Editor
 		private MenuNode _menuNode = null;
 
 		private Port _inputPort = null;
-		private List<Port> _outputPort = null;
+		private List<Port> _outputPorts = null;
 		#endregion Fields
 
 		#region Properties
 		internal MenuNode MenuNode { get { return _menuNode; } }
+		internal Port InputPort { get { return _inputPort; } }
+		internal IReadOnlyList<Port> OutputPorts { get { return _outputPorts; } }
 		#endregion Properties
 
 		#region Constructors
@@ -58,7 +60,7 @@ namespace MenuGraph.Editor
 
 		private void CreateOutputPorts()
 		{
-			_outputPort = new List<Port>();
+			_outputPorts = new List<Port>();
 
 			foreach (MenuUI.MenuNodeAction menuAction in _menuNode.TargetMenu.MenuActions)
 			{
@@ -70,7 +72,7 @@ namespace MenuGraph.Editor
 				Port outputPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(Port));
 				outputPort.portName = menuAction.EditorName;
 				outputContainer.Add(outputPort);
-				_outputPort.Add(outputPort);
+				_outputPorts.Add(outputPort);
 			}
 		}
 		#endregion Methods

@@ -7,15 +7,13 @@ namespace MenuGraph
 	{
 		#region Fields
 		[Header("Editor Only")]
-		//[SerializeField] private Vector2 _editorPosition = Vector2.zero;
 		[SerializeField] private Texture2D _editorIcon = null;
-		[SerializeField] private Texture2D _thumbnailTexture = null;
+		[SerializeField] private Texture2D _editorThumbnail = null;
 		#endregion Fields
 
 		#region Properties
-		//public Vector2 EditorPosition { get { return _editorPosition; } }
 		public Texture2D EditorIcon { get { return _editorIcon; } }
-		public Texture2D ThumbnailTexture { get { return _thumbnailTexture; } }
+		public Texture2D EditorThumbnail { get { return _editorThumbnail; } }
 		#endregion Properties
 	}
 }

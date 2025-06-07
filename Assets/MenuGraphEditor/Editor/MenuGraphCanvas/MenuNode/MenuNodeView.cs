@@ -46,7 +46,7 @@ namespace MenuGraph.Editor
 		private void AddSnapshot()
 		{
 			VisualElement content = this.Q(NODE_CONTENT_ELEMENT_ID);
-			content.Insert(0, new MenuNodeThumbnailImage(_menuNode.TargetMenu.ThumbnailTexture));
+			content.Insert(0, new MenuNodeThumbnailImage(_menuNode.TargetMenu.EditorThumbnail));
 		}
 
 		private void CreateInputPort()

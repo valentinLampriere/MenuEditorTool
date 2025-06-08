@@ -8,7 +8,7 @@ namespace MenuGraph.Editor
 	{
 		#region Fields
 		private MenuGraphToolbar _menuGraphToolbar = null;
-		private MenuNodesInspector _menuNodesInspector = null;
+		private MenuGraphInspector _menuGraphInspector = null;
 		private MenuGraphCanvas _menuGraphCanvas = null;
 		#endregion Fields
 
@@ -26,7 +26,7 @@ namespace MenuGraph.Editor
 			rootVisualElement.LoadUXML();
 
 			_menuGraphToolbar = rootVisualElement.Q<MenuGraphToolbar>();
-			_menuNodesInspector = rootVisualElement.Q<MenuNodesInspector>();
+			_menuGraphInspector = rootVisualElement.Q<MenuGraphInspector>();
 			_menuGraphCanvas = rootVisualElement.Q<MenuGraphCanvas>();
 
 			MenuGraph currentMenuGraph = SelectMenuGraph();
@@ -39,8 +39,8 @@ namespace MenuGraph.Editor
 			_menuGraphToolbar?.Dispose();
 			_menuGraphToolbar = null;
 
-			_menuNodesInspector?.Dispose();
-			_menuNodesInspector = null;
+			_menuGraphInspector?.Dispose();
+			_menuGraphInspector = null;
 
 			_menuGraphCanvas?.Dispose();
 			_menuGraphCanvas = null;

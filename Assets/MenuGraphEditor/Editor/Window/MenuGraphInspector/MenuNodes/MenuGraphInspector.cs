@@ -7,8 +7,7 @@ namespace MenuGraph.Editor
 	using VisualElementHelper;
 
 	[UxmlElement]
-	// TODO : Rename to MenuGraphInspector.
-	internal sealed partial class MenuNodesInspector : VisualElement, IDisposable
+	internal sealed partial class MenuGraphInspector : VisualElement, IDisposable
 	{
 		#region Constants
 		private const string MENUS_HIERARCHY_UXML_ID = "MenusHierarchy";
@@ -21,7 +20,7 @@ namespace MenuGraph.Editor
 		#endregion Fields
 
 		#region Constructors
-		public MenuNodesInspector()
+		public MenuGraphInspector()
 		{
 			this.LoadUXML();
 

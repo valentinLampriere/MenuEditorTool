@@ -7,6 +7,7 @@ namespace MenuGraph.Editor
 	{
 		#region Constants
 		private const float THUMBNAIL_IMAGE_RATIO = 16.0f / 9.0f;
+		private const float THUMBNAIL_IMAGE_INVERSED_RATIO = 1.0f / THUMBNAIL_IMAGE_RATIO;
 		#endregion Constants
 
 		#region Constructors
@@ -39,7 +40,7 @@ namespace MenuGraph.Editor
 		private void ApplyWidth(float width)
 		{
 			style.maxWidth = width;
-			style.maxHeight = width * (1.0f / THUMBNAIL_IMAGE_RATIO);
+			style.maxHeight = width * THUMBNAIL_IMAGE_INVERSED_RATIO;
 		}
 
 		private void OnThumbnailWidthChanged(float newThumbnailWidth)

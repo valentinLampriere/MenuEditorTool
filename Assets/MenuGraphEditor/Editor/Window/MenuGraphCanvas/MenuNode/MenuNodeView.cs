@@ -48,6 +48,11 @@ namespace MenuGraph.Editor
 		{
 			Rect rect = base.GetPosition();
 
+			if (expanded == false)
+			{
+				return rect;
+			}
+
 			float width = MenuGraphEditorPrefs.GetSavedThumbnailWidth();
 			float height = _menuNodeThumbnailImage.ComputeHeight(width);
 
@@ -61,13 +66,18 @@ namespace MenuGraph.Editor
 		{
 			base.SetPosition(newPos);
 
+			_menuNode.EditorPosition = newPos.position;
+
+			if (expanded == false)
+			{
+				return;
+			}
+
 			float width = MenuGraphEditorPrefs.GetSavedThumbnailWidth();
 			float height = _menuNodeThumbnailImage.ComputeHeight(width);
 
 			style.left = newPos.x - width * 0.5f;
 			style.top = newPos.y - height * 0.5f;
-
-			_menuNode.EditorPosition = newPos.position;
 		}
 
 		public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
@@ -80,6 +90,9 @@ namespace MenuGraph.Editor
 			base.ToggleCollapse();
 
 			_menuNodeThumbnailImage.style.display = expanded == true ? DisplayStyle.Flex : DisplayStyle.None;
+
+			Rect rect = GetPosition();
+			SetPosition(new Rect(_menuNode.EditorPosition.x, _menuNode.EditorPosition.y, rect.width, rect.height));
 		}
 		#endregion Node
 

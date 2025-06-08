@@ -36,13 +36,34 @@ namespace MenuGraph.Editor
 			AddSnapshot();
 			CreateInputPort();
 			CreateOutputPorts();
+
+			MenuGraphEditorPrefs.ThumbnailWidthChanged += OnThumbnailWidthChanged;
 		}
 		#endregion Constructors
 
 		#region Methods
+		public override Rect GetPosition()
+		{
+			Rect rect = base.GetPosition();
+
+			float width = MenuGraphEditorPrefs.GetSavedThumbnailWidth();
+			float height = _menuNodeThumbnailImage.ComputeHeight(width);
+
+			rect.x += width * 0.5f;
+			rect.y += height * 0.5f;
+
+			return rect;
+		}
+
 		public override void SetPosition(Rect newPos)
 		{
 			base.SetPosition(newPos);
+
+			float width = MenuGraphEditorPrefs.GetSavedThumbnailWidth();
+			float height = _menuNodeThumbnailImage.ComputeHeight(width);
+
+			style.left = newPos.x - width * 0.5f;
+			style.top = newPos.y - height * 0.5f;
 
 			_menuNode.EditorPosition = newPos.position;
 		}
@@ -88,6 +109,12 @@ namespace MenuGraph.Editor
 				outputContainer.Add(outputPort);
 				_outputPorts.Add(outputPort);
 			}
+		}
+
+		private void OnThumbnailWidthChanged(float newThumbnailWidth)
+		{
+			Rect rect = GetPosition();
+			SetPosition(new Rect(_menuNode.EditorPosition.x, _menuNode.EditorPosition.y, rect.width, rect.height));
 		}
 		#endregion Methods
 	}

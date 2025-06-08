@@ -23,6 +23,11 @@ namespace MenuGraph.Editor
 		#endregion Constructors
 
 		#region Methods
+		internal float ComputeHeight(float width)
+		{
+			return width * THUMBNAIL_IMAGE_INVERSED_RATIO;
+		}
+
 		private Image CreateImageElement(Texture2D thumbnail)
 		{
 			Image thumbnailElement = new Image();
@@ -40,7 +45,7 @@ namespace MenuGraph.Editor
 		private void ApplyWidth(float width)
 		{
 			style.maxWidth = width;
-			style.maxHeight = width * THUMBNAIL_IMAGE_INVERSED_RATIO;
+			style.maxHeight = ComputeHeight(width);
 		}
 
 		private void OnThumbnailWidthChanged(float newThumbnailWidth)

@@ -1,9 +1,10 @@
 namespace MenuGraph.Editor
 {
+	using System;
 	using UnityEngine;
 	using UnityEngine.UIElements;
 
-	internal sealed class MenuNodeThumbnailImage : VisualElement
+	internal sealed class MenuNodeThumbnailImage : VisualElement, IDisposable
 	{
 		#region Constants
 		private const float THUMBNAIL_IMAGE_RATIO = 16.0f / 9.0f;
@@ -20,9 +21,20 @@ namespace MenuGraph.Editor
 
 			MenuGraphEditorPrefs.ThumbnailWidthChanged += OnThumbnailWidthChanged;
 		}
+
+		~MenuNodeThumbnailImage()
+		{
+			// Make sure to unregister from static event.
+			MenuGraphEditorPrefs.ThumbnailWidthChanged -= OnThumbnailWidthChanged;
+		}
 		#endregion Constructors
 
 		#region Methods
+		public void Dispose()
+		{
+			MenuGraphEditorPrefs.ThumbnailWidthChanged -= OnThumbnailWidthChanged;
+		}
+
 		internal float ComputeHeight(float width)
 		{
 			return width * THUMBNAIL_IMAGE_INVERSED_RATIO;

@@ -6,6 +6,12 @@ namespace MenuGraph.Editor
 
 	internal sealed class MenuGraphWindow : EditorWindow
 	{
+		#region Fields
+		private MenuGraphToolbar _menuGraphToolbar = null;
+		private MenuNodesInspector _menuNodesInspector = null;
+		private MenuGraphCanvas _menuGraphCanvas = null;
+		#endregion Fields
+
 		#region Methods
 		#region Statics
 		[MenuItem("Window/Menu Graph Editor", priority = -10000)]
@@ -19,11 +25,25 @@ namespace MenuGraph.Editor
 		{
 			rootVisualElement.LoadUXML();
 
-			MenuGraphCanvas menuGraphCanvas = rootVisualElement.Q<MenuGraphCanvas>();
+			_menuGraphToolbar = rootVisualElement.Q<MenuGraphToolbar>();
+			_menuNodesInspector = rootVisualElement.Q<MenuNodesInspector>();
+			_menuGraphCanvas = rootVisualElement.Q<MenuGraphCanvas>();
 
 			MenuGraph currentMenuGraph = SelectMenuGraph();
 
-			menuGraphCanvas.PopulateMenuGraph(currentMenuGraph);
+			_menuGraphCanvas.PopulateMenuGraph(currentMenuGraph);
+		}
+
+		private void OnDestroy()
+		{
+			_menuGraphToolbar?.Dispose();
+			_menuGraphToolbar = null;
+
+			_menuNodesInspector?.Dispose();
+			_menuNodesInspector = null;
+
+			_menuGraphCanvas?.Dispose();
+			_menuGraphCanvas = null;
 		}
 
 		private MenuGraph SelectMenuGraph()

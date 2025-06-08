@@ -1,9 +1,10 @@
 namespace MenuGraph.Editor
 {
+	using System;
 	using UnityEditor;
 	using UnityEngine;
 
-	internal class CanvasSnapshotMaker
+	internal class CanvasSnapshotMaker : IDisposable
 	{
 		#region Fields
 		private Canvas _canvas = null;
@@ -17,6 +18,13 @@ namespace MenuGraph.Editor
 		#endregion Constructors
 
 		#region Methods
+		#region IDisposable
+		public void Dispose()
+		{
+			_canvas = null;
+		}
+		#endregion IDisposable
+
 		#region APIs
 		internal Texture2D TakeSnapshot()
 		{

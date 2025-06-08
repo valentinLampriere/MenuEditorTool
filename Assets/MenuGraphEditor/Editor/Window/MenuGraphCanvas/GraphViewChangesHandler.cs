@@ -65,6 +65,7 @@ namespace MenuGraph.Editor
 			}
 
 			_graphElementRemoved = null;
+			_edgeCreated = null;
 		}
 		#endregion Lifecycle
 

@@ -1,12 +1,13 @@
 namespace MenuGraph.Editor
 {
+	using System;
 	using System.IO;
 	using UnityEditor;
 	using UnityEngine;
 	using UnityEngine.UIElements;
 	using VisualElementHelper;
 
-	internal sealed class MenuNodeHierarchyPrefab : VisualElement
+	internal sealed class MenuNodeHierarchyPrefab : VisualElement, IDisposable
 	{
 		#region Constants
 		private const string PREFAB_ICON_UXML_ID = "PrefabIcon";
@@ -45,6 +46,15 @@ namespace MenuGraph.Editor
 		#endregion Constructors
 
 		#region Methods
+		public void Dispose()
+		{
+			_associatedPrefab = null;
+
+			UnregisterCallback<MouseDownEvent>(OnMouseDown);
+			UnregisterCallback<MouseMoveEvent>(OnMouseMove);
+			UnregisterCallback<MouseUpEvent>(OnMouseUp);
+		}
+
 		private void SetName(Label label)
 		{
 			string name = Path.GetFileNameWithoutExtension(_prefabPath);

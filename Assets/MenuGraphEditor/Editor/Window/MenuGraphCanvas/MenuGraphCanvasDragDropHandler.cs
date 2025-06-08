@@ -9,18 +9,18 @@ namespace MenuGraph.Editor
 	internal sealed class MenuGraphCanvasDragDropHandler : IDisposable
 	{
 		#region Delegates
-		internal delegate void MenuNodeDropped(MenuUI menu, DragPerformEvent dragPerformEvent);
+		internal delegate void OnMenuNodeDropped(MenuUI menu, DragPerformEvent dragPerformEvent);
 		#endregion Delegates
 
 		#region Fields
 		private VisualElement _target = null;
-		private MenuNodeDropped _onMenuNodeDropped = null;
+		private OnMenuNodeDropped _onMenuNodeDropped = null;
 		#endregion Fields
 
 		#region Constructors
 		internal MenuGraphCanvasDragDropHandler(
 			VisualElement target,
-			MenuNodeDropped onMenuNodeDropped = null)
+			OnMenuNodeDropped onMenuNodeDropped = null)
 		{
 			_target = target;
 			_onMenuNodeDropped = onMenuNodeDropped;
@@ -40,6 +40,8 @@ namespace MenuGraph.Editor
 				_target.UnregisterCallback<DragPerformEvent>(OnDragPerformed);
 				_target = null;
 			}
+
+			_onMenuNodeDropped = null;
 		}
 		#endregion Lifecycle
 

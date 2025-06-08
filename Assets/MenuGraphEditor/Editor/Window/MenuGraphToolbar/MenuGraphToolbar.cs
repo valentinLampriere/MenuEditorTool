@@ -1,11 +1,12 @@
 namespace MenuGraph.Editor
 {
+	using System;
 	using UnityEditor.UIElements;
 	using UnityEngine.UIElements;
 	using VisualElementHelper;
 
 	[UxmlElement]
-	internal sealed partial class MenuGraphToolbar : Toolbar
+	internal sealed partial class MenuGraphToolbar : Toolbar, IDisposable
 	{
 		#region Constants
 		private const string THUMBNAIL_WIDTH_SLIDER_ID = "thumbnailWidthSlider";
@@ -35,6 +36,15 @@ namespace MenuGraph.Editor
 		#endregion Constructors
 
 		#region Methods
+		public void Dispose()
+		{
+			if (_thumbnailWidthSlider != null)
+			{
+				_thumbnailWidthSlider.UnregisterValueChangedCallback(OnThumbnailWidthSliderValueChanged);
+				_thumbnailWidthSlider = null;
+			}
+		}
+
 		private void OnThumbnailWidthSliderValueChanged(ChangeEvent<float> changeEvent)
 		{
 			MenuGraphEditorPrefs.SaveThumbnailWidth(changeEvent.newValue);

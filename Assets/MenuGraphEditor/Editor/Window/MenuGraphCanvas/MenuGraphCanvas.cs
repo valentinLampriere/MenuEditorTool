@@ -1,5 +1,6 @@
 namespace MenuGraph.Editor
 {
+	using System;
 	using System.Collections.Generic;
 	using UnityEditor;
 	using UnityEditor.Experimental.GraphView;
@@ -8,7 +9,7 @@ namespace MenuGraph.Editor
 	using VisualElementHelper;
 
 	[UxmlElement]
-	internal sealed partial class MenuGraphCanvas : GraphView
+	internal sealed partial class MenuGraphCanvas : GraphView, IDisposable
 	{
 		#region Fields
 		private MenuGraph _targetMenuGraph = null;
@@ -39,10 +40,14 @@ namespace MenuGraph.Editor
 			_selectionWatcher.Register<ObjectSelectedComponent, MenuNode>(OnMenuNodeSelected);
 			_selectionWatcher.Register<ObjectDeselectedComponent, MenuNode>(OnMenuNodeDeselected);
 		}
+		#endregion Constructors
 
-		// TODO : Handle Dispose
-		~MenuGraphCanvas()
+		#region Methods
+		#region IDisposable
+		public void Dispose()
 		{
+			_targetMenuGraph = null;
+
 			_dragDropHandler?.Dispose();
 			_dragDropHandler = null;
 
@@ -51,7 +56,7 @@ namespace MenuGraph.Editor
 				_graphViewChangesHandler.GraphElementRemoved -= OnGraphElementRemoved;
 				_graphViewChangesHandler.EdgeCreated -= OnEdgeCreated;
 
-				_graphViewChangesHandler?.Dispose();
+				_graphViewChangesHandler.Dispose();
 				_graphViewChangesHandler = null;
 			}
 
@@ -68,10 +73,18 @@ namespace MenuGraph.Editor
 				_widthSlider.UnregisterValueChangedCallback(OnWidthSliderValueChanged);
 				_widthSlider = null;
 			}
-		}
-		#endregion Constructors
 
-		#region Methods
+			if (nodes != null)
+			{
+				foreach (Node node in nodes)
+				{
+					MenuNodeView menuNodeView = node as MenuNodeView;
+					menuNodeView?.Dispose();
+				}
+			}
+		}
+		#endregion IDisposable
+
 		#region GraphView
 		public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
 		{

@@ -1,12 +1,13 @@
 namespace MenuGraph.Editor
 {
+	using System;
 	using System.Collections.Generic;
 	using UnityEditor;
 	using UnityEditor.Experimental.GraphView;
 	using UnityEngine;
 	using UnityEngine.UIElements;
 
-	internal sealed class MenuNodeView : Node
+	internal sealed class MenuNodeView : Node, IDisposable
 	{
 		#region Constants
 		private const string NODE_CONTENT_ELEMENT_ID = "contents";
@@ -40,9 +41,29 @@ namespace MenuGraph.Editor
 
 			MenuGraphEditorPrefs.ThumbnailWidthChanged += OnThumbnailWidthChanged;
 		}
+
+		~MenuNodeView()
+		{
+			// Make sure to unregister from static event.
+			MenuGraphEditorPrefs.ThumbnailWidthChanged -= OnThumbnailWidthChanged;
+		}
 		#endregion Constructors
 
 		#region Methods
+		public void Dispose()
+		{
+			_menuNode = null;
+			_inputPort = null;
+
+			_outputPorts?.Clear();
+			_outputPorts = null;
+
+			_menuNodeThumbnailImage?.Dispose();
+			_menuNodeThumbnailImage = null;
+
+			MenuGraphEditorPrefs.ThumbnailWidthChanged -= OnThumbnailWidthChanged;
+		}
+
 		#region Node
 		public override Rect GetPosition()
 		{
@@ -101,6 +122,7 @@ namespace MenuGraph.Editor
 			Canvas canvas = _menuNode.TargetMenu.GetComponent<Canvas>();
 			CanvasSnapshotMaker canvasSnapshotMaker = new CanvasSnapshotMaker(canvas);
 			Texture2D texture = canvasSnapshotMaker.TakeSnapshot();
+			canvasSnapshotMaker.Dispose();
 
 			VisualElement content = this.Q(NODE_CONTENT_ELEMENT_ID);
 			_menuNodeThumbnailImage = new MenuNodeThumbnailImage(texture);

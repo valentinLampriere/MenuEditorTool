@@ -1,10 +1,11 @@
 namespace MenuGraph.Editor
 {
+	using System;
 	using UnityEditor;
 	using UnityEngine;
 	using UnityEngine.UIElements;
 
-	internal sealed class MenuNodeHierarchyFoldout : Foldout
+	internal sealed class MenuNodeHierarchyFoldout : Foldout, IDisposable
 	{
 		#region Fields
 		private Image _foldoutIcon = null;
@@ -31,6 +32,17 @@ namespace MenuGraph.Editor
 		#endregion Constructors
 
 		#region Methods
+		public void Dispose()
+		{
+			_foldoutToggle = null;
+
+			_foldoutIcon?.Clear();
+			_foldoutIcon = null;
+
+			_closedFoldoutImage = null;
+			_openedFoldoutImage = null;
+		}
+
 		private Image CreateIcon()
 		{
 			Image icon = new Image();

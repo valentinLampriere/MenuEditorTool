@@ -1,6 +1,7 @@
 namespace MenuGraph.Editor
 {
 	using System.Collections.Generic;
+	using UnityEditor;
 	using UnityEditor.Experimental.GraphView;
 	using UnityEngine;
 	using UnityEngine.UIElements;
@@ -42,6 +43,7 @@ namespace MenuGraph.Editor
 		#endregion Constructors
 
 		#region Methods
+		#region Node
 		public override Rect GetPosition()
 		{
 			Rect rect = base.GetPosition();
@@ -68,12 +70,18 @@ namespace MenuGraph.Editor
 			_menuNode.EditorPosition = newPos.position;
 		}
 
+		public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
+		{
+			evt.menu.AppendAction("Select in Project", OnSelectMenuInProject);
+		}
+
 		protected override void ToggleCollapse()
 		{
 			base.ToggleCollapse();
 
 			_menuNodeThumbnailImage.style.display = expanded == true ? DisplayStyle.Flex : DisplayStyle.None;
 		}
+		#endregion Node
 
 		private void AddSnapshot()
 		{
@@ -115,6 +123,11 @@ namespace MenuGraph.Editor
 		{
 			Rect rect = GetPosition();
 			SetPosition(new Rect(_menuNode.EditorPosition.x, _menuNode.EditorPosition.y, rect.width, rect.height));
+		}
+
+		private void OnSelectMenuInProject(DropdownMenuAction menuAction)
+		{
+			Selection.activeObject = _menuNode.TargetMenu.gameObject;
 		}
 		#endregion Methods
 	}

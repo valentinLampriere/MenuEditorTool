@@ -6,9 +6,7 @@ namespace MenuGraph.Editor
 	internal sealed class MenuNodeThumbnailImage : VisualElement
 	{
 		#region Constants
-		// TODO: Currently hardcoded, but it would be great to have a slider in the window to change the size of the thumbnail.
-		private const float THUMBNAIL_IMAGE_MAX_WIDTH = 300.0f;
-		private const float THUMBNAIL_IMAGE_MAX_HEIGHT = 168.75f;
+		private const float THUMBNAIL_IMAGE_RATIO = 16.0f / 9.0f;
 		#endregion Constants
 
 		#region Constructors
@@ -16,7 +14,10 @@ namespace MenuGraph.Editor
 		{
 			Image thumbnailElement = CreateImageElement(thumbnail);
 			ApplyStyle(thumbnailElement);
+			ApplyWidth(MenuGraphEditorPrefs.GetSavedThumbnailWidth());
 			Add(thumbnailElement);
+
+			MenuGraphEditorPrefs.ThumbnailWidthChanged += OnThumbnailWidthChanged;
 		}
 		#endregion Constructors
 
@@ -33,9 +34,17 @@ namespace MenuGraph.Editor
 		private void ApplyStyle(Image thumbnailElement)
 		{
 			thumbnailElement.scaleMode = ScaleMode.ScaleAndCrop;
+		}
 
-			style.maxWidth = THUMBNAIL_IMAGE_MAX_WIDTH;
-			style.maxHeight = THUMBNAIL_IMAGE_MAX_HEIGHT;
+		private void ApplyWidth(float width)
+		{
+			style.maxWidth = width;
+			style.maxHeight = width * (1.0f / THUMBNAIL_IMAGE_RATIO);
+		}
+
+		private void OnThumbnailWidthChanged(float newThumbnailWidth)
+		{
+			ApplyWidth(newThumbnailWidth);
 		}
 		#endregion Methods
 	}

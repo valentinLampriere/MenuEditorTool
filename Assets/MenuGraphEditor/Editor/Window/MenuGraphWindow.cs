@@ -1,7 +1,6 @@
 namespace MenuGraph.Editor
 {
 	using UnityEditor;
-	using UnityEngine;
 	using UnityEngine.UIElements;
 	using VisualElementHelper;
 

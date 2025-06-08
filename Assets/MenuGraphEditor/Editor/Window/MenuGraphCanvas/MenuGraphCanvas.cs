@@ -12,6 +12,7 @@ namespace MenuGraph.Editor
 	{
 		#region Fields
 		private MenuGraph _targetMenuGraph = null;
+		private Slider _widthSlider = null;
 
 		private MenuGraphCanvasDragDropHandler _dragDropHandler = null;
 		private GraphViewChangesHandler _graphViewChangesHandler = null;
@@ -29,7 +30,7 @@ namespace MenuGraph.Editor
 			_graphViewChangesHandler.GraphElementRemoved += OnGraphElementRemoved;
 			_graphViewChangesHandler.EdgeCreated += OnEdgeCreated;
 
-			this.AddManipulator(new ContentZoomer() { minScale = 0.6f, maxScale = 1.5f});
+			this.AddManipulator(new ContentZoomer() { minScale = 0.5f, maxScale = 1.5f});
 			this.AddManipulator(new ContentDragger());
 			this.AddManipulator(new SelectionDragger());
 			this.AddManipulator(new RectangleSelector());
@@ -39,6 +40,7 @@ namespace MenuGraph.Editor
 			_selectionWatcher.Register<ObjectDeselectedComponent, MenuNode>(OnMenuNodeDeselected);
 		}
 
+		// TODO : Handle Dispose
 		~MenuGraphCanvas()
 		{
 			_dragDropHandler?.Dispose();
@@ -59,6 +61,12 @@ namespace MenuGraph.Editor
 				_selectionWatcher.Unregister<ObjectDeselectedComponent, MenuNode>(OnMenuNodeDeselected);
 				_selectionWatcher.Dispose();
 				_selectionWatcher = null;
+			}
+
+			if (_widthSlider != null)
+			{
+				_widthSlider.UnregisterValueChangedCallback(OnWidthSliderValueChanged);
+				_widthSlider = null;
 			}
 		}
 		#endregion Constructors
@@ -132,6 +140,17 @@ namespace MenuGraph.Editor
 			}
 		}
 
+		internal void SetWidthSlider(Slider widthSlider)
+		{
+			if (_widthSlider != null)
+			{
+				_widthSlider.UnregisterValueChangedCallback(OnWidthSliderValueChanged);
+			}
+
+			_widthSlider = widthSlider;
+			_widthSlider.RegisterValueChangedCallback(OnWidthSliderValueChanged);
+		}
+
 		private void OnMenuNodeDropped(MenuUI menu, DragPerformEvent dragPerformEvent)
 		{
 			if (_targetMenuGraph == null)
@@ -203,6 +222,14 @@ namespace MenuGraph.Editor
 
 			childView.MenuNode.Parent = parentView.MenuNode;
 			parentView.MenuNode.Children[childIndex] = childView.MenuNode;
+		}
+
+		private void OnWidthSliderValueChanged(ChangeEvent<float> changeEvent)
+		{
+			foreach (Node node in nodes)
+			{
+				MenuNodeView menuNodeView = node as MenuNodeView;
+			}
 		}
 
 		/// <summary>

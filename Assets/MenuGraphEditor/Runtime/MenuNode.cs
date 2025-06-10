@@ -23,7 +23,7 @@ namespace MenuGraph
 		#region ISerializationCallbackReceiver
 		public void OnBeforeSerialize()
 		{
-			int menuActionsCount = _targetMenu.MenuActions.Count;
+			int menuActionsCount = _targetMenu != null ? _targetMenu.MenuActions.Count : 0;
 			int childrenCount = _children.Count;
 
 			if (menuActionsCount > childrenCount)

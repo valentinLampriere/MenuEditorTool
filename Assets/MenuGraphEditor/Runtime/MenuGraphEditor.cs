@@ -2,7 +2,6 @@
 namespace MenuGraph
 {
 	using UnityEditor;
-	using UnityEngine;
 
 	public sealed partial class MenuGraph
 	{

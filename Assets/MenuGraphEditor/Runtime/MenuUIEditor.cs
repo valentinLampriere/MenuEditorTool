@@ -3,7 +3,7 @@ namespace MenuGraph
 {
 	using UnityEngine;
 
-	public sealed partial class MenuUI
+	public partial class MenuUI
 	{
 		#region Fields
 		[Header("Editor Only")]

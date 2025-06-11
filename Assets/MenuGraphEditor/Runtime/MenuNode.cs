@@ -20,6 +20,24 @@ namespace MenuGraph
 		#endregion Properties
 
 		#region Methods
+		public bool TryGetNextMenuNode(int index, out MenuNode nextMenuNode)
+		{
+			if (_children == null)
+			{
+				nextMenuNode = null;
+				return false;
+			}
+
+			if (index < 0 || index >= _children.Count)
+			{
+				nextMenuNode = null;
+				return false;
+			}
+
+			nextMenuNode = _children[index];
+			return nextMenuNode != null;
+		}
+
 		#region ISerializationCallbackReceiver
 		public void OnBeforeSerialize()
 		{

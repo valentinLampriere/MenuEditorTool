@@ -35,7 +35,7 @@ namespace MenuGraph.Editor
 
 			title = menuNode.name;
 
-			AddSnapshot();
+			AddThumbnail();
 			CreateInputPort();
 			CreateOutputPorts();
 
@@ -117,15 +117,12 @@ namespace MenuGraph.Editor
 		}
 		#endregion Node
 
-		private void AddSnapshot()
+		private void AddThumbnail()
 		{
 			Canvas canvas = _menuNode.TargetMenu.GetComponent<Canvas>();
-			CanvasSnapshotMaker canvasSnapshotMaker = new CanvasSnapshotMaker(canvas);
-			Texture2D texture = canvasSnapshotMaker.TakeSnapshot();
-			canvasSnapshotMaker.Dispose();
 
 			VisualElement content = this.Q(NODE_CONTENT_ELEMENT_ID);
-			_menuNodeThumbnailImage = new MenuNodeThumbnailImage(texture);
+			_menuNodeThumbnailImage = new MenuNodeThumbnailImage(canvas);
 			content.Insert(0, _menuNodeThumbnailImage);
 		}
 

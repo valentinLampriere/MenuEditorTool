@@ -1,6 +1,7 @@
 namespace MenuGraph.Editor
 {
 	using System;
+	using UnityEditor;
 	using UnityEngine;
 	using UnityEngine.UIElements;
 
@@ -11,28 +12,43 @@ namespace MenuGraph.Editor
 		private const float THUMBNAIL_IMAGE_INVERSED_RATIO = 1.0f / THUMBNAIL_IMAGE_RATIO;
 		#endregion Constants
 
+		#region Fields
+		private Canvas _canvas = null;
+
+		private Image _thumbnailImage = null;
+		#endregion Fields
+
 		#region Constructors
-		internal MenuNodeThumbnailImage(Texture2D thumbnail)
+		internal MenuNodeThumbnailImage(Canvas canvas)
 		{
-			Image thumbnailElement = CreateImageElement(thumbnail);
-			ApplyStyle(thumbnailElement);
+			_canvas = canvas;
+
+			_thumbnailImage = new Image();
+			ApplyStyle(_thumbnailImage);
 			ApplyWidth(MenuGraphEditorPrefs.GetSavedThumbnailWidth());
-			Add(thumbnailElement);
+			TakeSnapshot();
+			Add(_thumbnailImage);
 
 			MenuGraphEditorPrefs.ThumbnailWidthChanged += OnThumbnailWidthChanged;
+			EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
 		}
 
 		~MenuNodeThumbnailImage()
 		{
 			// Make sure to unregister from static event.
 			MenuGraphEditorPrefs.ThumbnailWidthChanged -= OnThumbnailWidthChanged;
+			EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
 		}
 		#endregion Constructors
 
 		#region Methods
 		public void Dispose()
 		{
+			_canvas = null;
+			_thumbnailImage = null;
+
 			MenuGraphEditorPrefs.ThumbnailWidthChanged -= OnThumbnailWidthChanged;
+			EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
 		}
 
 		internal float ComputeHeight(float width)
@@ -40,13 +56,13 @@ namespace MenuGraph.Editor
 			return width * THUMBNAIL_IMAGE_INVERSED_RATIO;
 		}
 
-		private Image CreateImageElement(Texture2D thumbnail)
+		private void TakeSnapshot()
 		{
-			Image thumbnailElement = new Image();
+			CanvasSnapshotMaker canvasSnapshotMaker = new CanvasSnapshotMaker(_canvas);
+			Texture2D texture = canvasSnapshotMaker.TakeSnapshot();
+			canvasSnapshotMaker.Dispose();
 
-			thumbnailElement.image = thumbnail;
-
-			return thumbnailElement;
+			_thumbnailImage.image = texture;
 		}
 
 		private void ApplyStyle(Image thumbnailElement)
@@ -63,6 +79,14 @@ namespace MenuGraph.Editor
 		private void OnThumbnailWidthChanged(float newThumbnailWidth)
 		{
 			ApplyWidth(newThumbnailWidth);
+		}
+
+		private void OnPlayModeStateChanged(PlayModeStateChange playModeStateChange)
+		{
+			if (playModeStateChange == PlayModeStateChange.EnteredEditMode)
+			{
+				TakeSnapshot();
+			}
 		}
 		#endregion Methods
 	}

@@ -128,7 +128,7 @@ namespace MenuGraph.Editor
 
 		private void CreateInputPort()
 		{
-			_inputPort = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(Port));
+			_inputPort = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(Port));
 			_inputPort.portName = string.Empty;
 			inputContainer.Add(_inputPort);
 		}
